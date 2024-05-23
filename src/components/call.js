@@ -38,7 +38,7 @@ const PhoneDialer = () => {
           onClick={handleClear}
           className="px-4 py-2 bg-red-500 text-white rounded col-span-1"
         >
-          Delete
+          Supprimer
         </button>
         <button
           onClick={() => handleButtonClick('0')}
@@ -50,7 +50,7 @@ const PhoneDialer = () => {
           onClick={handleCall}
           className="px-4 py-2 bg-green-500 text-white rounded col-span-1"
         >
-          Call
+          Appeller
         </button>
       </div>
     </div>

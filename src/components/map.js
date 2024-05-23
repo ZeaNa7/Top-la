@@ -57,17 +57,17 @@ const MapComponent = () => {
 
     return position === null ? null : (
       <Marker position={position} icon={locationIcon}>
-        <Popup>You are here</Popup>
+        <Popup>Vous êtes ici</Popup>
       </Marker>
     );
   }
 
   if (locationAllowed === null) {
-    return <div>Requesting location permission...</div>;
+    return <div>Demande d'accès à la localisation...</div>;
   }
 
   if (locationAllowed === false) {
-    return <div>Location access denied. Please allow location access to view the map.</div>;
+    return <div>LAccès à la localisation refusé. Activez la localisation pour accéder à la carte.</div>;
   }
 
   return (

@@ -54,15 +54,15 @@ const App = () => {
           </Typography>
           <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'block' } }}>
             <Link to="/map" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Map
+              Carte
             </Link>
           </Typography>
           <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'block' } }}>
             <Link to="/call" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Call
+              Appel
             </Link>
           </Typography>
-                            </Box>
+        </Box>
           <BatteryIndicator />
         {/* Menu déroulant pour les petits écrans */}
         <Menu
@@ -82,12 +82,12 @@ const App = () => {
           </MenuItem>
           <MenuItem onClick={handleClose}>
             <Link to="/map" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Map
+              Carte
             </Link>
           </MenuItem>
           <MenuItem onClick={handleClose}>
             <Link to="/call" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Call
+              Appel
             </Link>
           </MenuItem>
         </Menu>

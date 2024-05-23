@@ -17,7 +17,7 @@ const BatteryIndicator = () => {
     }
   }, []);
 
-  return <div className="flex items-center">{batteryLevel !== null ? <span className="mr-2">{getBatteryIcon(batteryLevel)} {batteryLevel}%</span> : <span>Unavailable</span>}</div>;
+  return <div className="flex items-center">{batteryLevel !== null ? <span className="mr-2">{getBatteryIcon(batteryLevel)} {batteryLevel}%</span> : <span>Indisponible</span>}</div>;
 };
 
 export default BatteryIndicator;
