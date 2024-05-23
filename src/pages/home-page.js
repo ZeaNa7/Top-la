@@ -5,11 +5,11 @@ import HomeComponent from '../components/home';
 
 function HomePage() {
     return (
-    <>
+    <div className='bg-paleOrange'>
       <Navbar />
       <Online />
       <HomeComponent />
-    </>
+    </div>
   );
 }
 

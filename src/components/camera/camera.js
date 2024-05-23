@@ -126,7 +126,7 @@ const CameraComponent = () => {
     <>
       <div style={{ textAlign: 'center', marginTop: '5px' }}>
         <Button variant="outlined" onClick={takePhoto} style={{ margin: '1em' }}>
-          Take Photo
+          prendre une photo
         </Button>
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

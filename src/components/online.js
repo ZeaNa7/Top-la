@@ -18,7 +18,7 @@ const Online = () => {
 
   return (
     <div>
-         {online ? "Online" : "Offline"}
+         {online ? "En ligne" : "Hors ligne"}
     </div>
   );
 }
