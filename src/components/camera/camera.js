@@ -1,18 +1,23 @@
-import { Button } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
-import { Store } from 'react-notifications-component';
-import 'react-notifications-component/dist/theme.css';
-
-
+import { Button } from '@mui/material';
 
 const CameraComponent = () => {
   const [pictures, setPictures] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const videoRef = useRef(null);
-  const mediaRecorderRef = useRef(null);
-  const chunksRef = useRef([]);
-  const canvasRef = useRef(null); 
+  const canvasRef = useRef(null);
+
+  const requestNotificationPermission = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+        } else if (permission === 'denied') {
+          console.log('Notification permission denied.');
+        }
+      });
+    }
+  };
 
   const takePhoto = async () => {
     if (videoRef.current && canvasRef.current) {
@@ -24,14 +29,20 @@ const CameraComponent = () => {
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const photoURL = canvas.toDataURL('image/png');
-        setPictures((prevPhotos) => [...prevPhotos, photoURL]);
         const uniqueKey = generateUniqueKey('photo');
         localStorage.setItem(uniqueKey, JSON.stringify(photoURL));
+        
         if (navigator.vibrate) {
           navigator.vibrate([200, 100, 200]);
+        } else {
+          console.warn('Vibration not supported');
         }
-        showNotification("Photo Taken", "Your photo has been taken successfully !");
+        
+        showNativeNotification('Photo Taken', 'Your photo has been taken successfully.');
 
+        if (isOnline) {
+          setPictures((prevPhotos) => [...prevPhotos, photoURL]);
+        }
       }
     }
   };
@@ -46,56 +57,29 @@ const CameraComponent = () => {
     return `${type}_${newCounter}`;
   };
 
-  const startRecording = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
+  const showNativeNotification = (title, message) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body: message });
+    }
+  };
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
+  const loadPhotosFromStorage = () => {
+    const storedPhotos = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('photo_')) {
+        const photo = localStorage.getItem(key);
+        if (photo) {
+          storedPhotos.push(JSON.parse(photo));
         }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'video/mp4' });
-        const videoURL = URL.createObjectURL(blob);
-        setVideos((prevVideos) => [...prevVideos, videoURL]);
-        const uniqueKey = generateUniqueKey('video');
-        localStorage.setItem(uniqueKey, JSON.stringify(videoURL));
-        chunksRef.current = [];
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-   const showNotification = (title, message) => {
-    Store.addNotification({
-      title: title,
-      message: message,
-      type: "success",
-      insert: "top",
-      container: "top-right",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true
       }
-    });
+    }
+    setPictures(storedPhotos);
   };
 
   useEffect(() => {
+    requestNotificationPermission();
+
     const requestCameraPermission = async () => {
       try {
         await navigator.mediaDevices.getUserMedia({ video: true });
@@ -105,7 +89,6 @@ const CameraComponent = () => {
     };
 
     requestCameraPermission();
-
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -116,35 +99,28 @@ const CameraComponent = () => {
       .catch((error) => {
         console.error('Error accessing camera:', error);
       });
-  }, []);
 
-  useEffect(() => {
-    const storedPhotos = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('photo_')) {
-        const photo = localStorage.getItem(key);
-        if (photo) {
-          storedPhotos.push(photo);
-        }
-      }
-    }
-    setPictures(storedPhotos);
-  }, []);
+    const handleOnline = () => {
+      setIsOnline(true);
+      loadPhotosFromStorage(); // Load photos from local storage when coming back online
+    };
 
-  useEffect(() => {
-    const storedVideos = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('video_')) {
-        const video = localStorage.getItem(key);
-        if (video) {
-          storedVideos.push(video);
-        }
-      }
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    if (isOnline) {
+      loadPhotosFromStorage();
     }
-    setVideos(storedVideos);
-  }, []);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [isOnline]);
 
   return (
     <>
@@ -152,35 +128,19 @@ const CameraComponent = () => {
         <Button variant="outlined" onClick={takePhoto} style={{ margin: '1em' }}>
           Take Photo
         </Button>
-        {!isRecording ? (
-          <Button variant="outlined" onClick={startRecording} style={{ margin: '1em' }}>
-            Start Recording
-          </Button>
-        ) : (
-          <Button variant="outlined" onClick={stopRecording} style={{ margin: '1em' }}>
-            Stop Recording
-          </Button>
-          
-        )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <video ref={videoRef} style={{ maxWidth: '100%', maxHeight: '80vh' }} autoPlay></video>
         <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       </div>
 
-      {/* <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
         {pictures.map((photo, index) => (
           <div key={index} style={{ display: 'inline-block', margin: '10px' }}>
             <img src={photo} alt="captured" style={{ width: '300px', height: 'auto' }} />
           </div>
         ))}
-
-        {videos.map((videoURL, index) => (
-          <div key={index} style={{ display: 'inline-block', margin: '10px' }}>
-            <video src={videoURL} controls style={{ width: '300px', height: 'auto' }}></video>
-          </div>
-        ))}
-      </div> */}
+      </div>
     </>
   );
 };
