@@ -1,5 +1,9 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
+import { Store } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
+
+
 
 const CameraComponent = () => {
   const [pictures, setPictures] = useState([]);
@@ -26,7 +30,8 @@ const CameraComponent = () => {
         if (navigator.vibrate) {
           navigator.vibrate([200, 100, 200]);
         }
-        showNotification("Photo Taken", "Your photo has been taken successfully.");
+        showNotification("Photo Taken", "Your photo has been taken successfully !");
+
       }
     }
   };
@@ -74,18 +79,20 @@ const CameraComponent = () => {
     }
   };
 
-  const showNotification = (title, body) => {
-    if ('Notification' in window && 'serviceWorker' in navigator) {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, {
-              body,
-            });
-          });
-        }
-      });
-    }
+   const showNotification = (title, message) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: "success",
+      insert: "top",
+      container: "top-right",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true
+      }
+    });
   };
 
   useEffect(() => {
@@ -153,6 +160,7 @@ const CameraComponent = () => {
           <Button variant="outlined" onClick={stopRecording} style={{ margin: '1em' }}>
             Stop Recording
           </Button>
+          
         )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -160,7 +168,7 @@ const CameraComponent = () => {
         <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      {/* <div style={{ textAlign: 'center' }}>
         {pictures.map((photo, index) => (
           <div key={index} style={{ display: 'inline-block', margin: '10px' }}>
             <img src={photo} alt="captured" style={{ width: '300px', height: 'auto' }} />
@@ -172,7 +180,7 @@ const CameraComponent = () => {
             <video src={videoURL} controls style={{ width: '300px', height: 'auto' }}></video>
           </div>
         ))}
-      </div>
+      </div> */}
     </>
   );
 };

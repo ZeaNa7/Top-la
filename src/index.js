@@ -4,10 +4,12 @@ import './index.css';
 import { AppRouter } from './router';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ReactNotifications } from 'react-notifications-component';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+      <ReactNotifications />
       <CssBaseline />
       <AppRouter />
   </React.StrictMode>,

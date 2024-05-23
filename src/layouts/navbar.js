@@ -42,7 +42,7 @@ const App = () => {
           }}
         >
           {/* Affichage des noms de page uniquement sur les écrans non mobiles */}
-          <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'flex' }}}>
+                    <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'flex' }}}>
             <Link to="/camera" style={{ textDecoration: 'none', color: 'inherit' }}>
               Camera
             </Link>
@@ -62,7 +62,7 @@ const App = () => {
               Call
             </Link>
           </Typography>
-        </Box>
+                            </Box>
           <BatteryIndicator />
         {/* Menu déroulant pour les petits écrans */}
         <Menu
