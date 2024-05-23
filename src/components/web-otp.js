@@ -1,36 +1,39 @@
-import React, { useEffect, useRef } from 'react';
+import React from "react";
 
-const ReceiveCodeComponent = () => {
-  const inputRef = useRef(null);
+export default class App extends React.Component {
+  state = {
+    otp: ""
+  };
 
-  useEffect(() => {
-    if ('OTPCredential' in window) {
-      const ac = new AbortController();
-      const input = inputRef.current;
+componentDidMount() {
 
-      navigator.credentials.get({
-        otp: { transport: ['sms'] },
-        signal: ac.signal,
-      }).then(otp => {
-        if (input) {
-          input.value = otp.code;
-        }
-      }).catch(err => {
-        console.log('Error receiving OTP:', err);
-      });
+if ("OTPCredential" in window) {
+  const ac = new AbortController();
 
-      return () => {
-        ac.abort();
-      };
-    }
-  }, []);
+  navigator.credentials
+    .get({
+      otp: { transport: ["sms"] },
+      signal: ac.signal
+    })
+    .then((otp) => {
+      this.setState({ otp: otp.code });
+      ac.abort();
+    })
+    .catch((err) => {
+      ac.abort();
+      console.log(err);
+    });
+}
 
-  return (
-    <form>
-      <input ref={inputRef} type="text" autoComplete="one-time-code" required />
-      <button type="submit">Submit</button>
-    </form>
-  );
-};
 
-export default ReceiveCodeComponent;
+}
+
+  render() {
+    return (
+      <div className="App">
+        <h1>Hello CodeSandbox</h1>
+        <h2>Your OTP is: {this.state.otp}</h2>
+      </div>
+    );
+  }
+}
