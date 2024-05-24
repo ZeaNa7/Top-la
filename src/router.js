@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CameraPage from './pages/camera-page';
-import HomePage from './pages/home-page';
-import PicturePage from './pages/picture-page';
-import MapPage from './pages/map-page';
-import CallPage from './pages/call-page';
+import CameraPage from './pages/cameraPage';
+import HomePage from './pages/homePage';
+import PicturePage from './pages/picturePage';
+import MapPage from './pages/mapPage';
+import CallPage from './pages/callPage';
 
 export const AppRouter = () => (
   <Router>
