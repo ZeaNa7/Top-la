@@ -31,7 +31,9 @@ const CameraComponent = () => {
         const photoURL = canvas.toDataURL('image/png');
         const uniqueKey = generateUniqueKey('photo');
         localStorage.setItem(uniqueKey, JSON.stringify(photoURL));
-        
+        if ('vibrate' in navigator) {
+          navigator.vibrate([100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100]);
+        }
         showNativeNotification('Votre photo a été prise !');
 
         if (isOnline) {
