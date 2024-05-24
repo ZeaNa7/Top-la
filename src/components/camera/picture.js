@@ -42,7 +42,7 @@ const Picture = () => {
               onClick={() => openModal(item)}
             >
               {item.type === 'photo' ? (
-                <img src={item.url} alt={`Photo ${item.id}`} className="w-full h-auto" />
+                <img src={item.url} alt={selectedItem.id} className="w-full h-auto" />
               ) : (
                 <video src={item.url} controls className="w-full h-auto" />
               )}
@@ -69,7 +69,7 @@ const Picture = () => {
               Close
             </button>
             {selectedItem.type === 'photo' ? (
-              <img src={selectedItem.url} alt={`Photo ${selectedItem.id}`} className="w-full h-auto" />
+              <img src={selectedItem.url} alt={selectedItem.id} className="w-full h-auto" />
             ) : (
               <video src={selectedItem.url} controls className="w-full h-auto" />
             )}
