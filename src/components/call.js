@@ -21,7 +21,7 @@ const PhoneDialer = () => {
         type="tel"
         value={phoneNumber}
         readOnly
-        placeholder="Phone number"
+        placeholder="Numéro de téléphone"
         className="px-4 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
       />
       <div className="grid grid-cols-3 gap-4">

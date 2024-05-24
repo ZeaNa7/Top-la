@@ -32,16 +32,10 @@ const CameraComponent = () => {
         const uniqueKey = generateUniqueKey('photo');
         localStorage.setItem(uniqueKey, JSON.stringify(photoURL));
         
-        if (navigator.vibrate) {
-          navigator.vibrate([200, 100, 200]);
-        } else {
-          console.warn('Vibration not supported');
-        }
-        
-        showNativeNotification('Photo Taken', 'Your photo has been taken successfully.');
+        showNativeNotification('Votre photo a été prise !');
 
         if (isOnline) {
-          setPictures((prevPhotos) => [...prevPhotos, photoURL]);
+          setPictures((photo) => [...photo, photoURL]);
         }
       }
     }
@@ -57,11 +51,18 @@ const CameraComponent = () => {
     return `${type}_${newCounter}`;
   };
 
-  const showNativeNotification = (title, message) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, { body: message });
-    }
+  const showNativeNotification = async (message) => {
+  const registration = await navigator.serviceWorker.getRegistration();
+  const title = 'Photo';
+  const payload = {
+    body: message
   };
+  if (registration && 'showNotification' in registration) {
+    registration.showNotification(title, payload);
+  } else {
+    new Notification(title, payload);
+  }
+};
 
   const loadPhotosFromStorage = () => {
     const storedPhotos = [];
@@ -102,7 +103,8 @@ const CameraComponent = () => {
 
     const handleOnline = () => {
       setIsOnline(true);
-      loadPhotosFromStorage(); // Load photos from local storage when coming back online
+      loadPhotosFromStorage();
+      showNativeNotification(' Vos photos ont été synchronisées !');
     };
 
     const handleOffline = () => {

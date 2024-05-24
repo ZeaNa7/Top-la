@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 
-// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
 
 const Picture = () => {
@@ -12,10 +11,10 @@ const Picture = () => {
     const allMediaItems = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.startsWith('photo_') || key.startsWith('video_'))) {
+      if (key && key.startsWith('photo_')) {
         const url = localStorage.getItem(key);
         if (url) {
-          const type = key.startsWith('photo_') ? 'photo' : 'video';
+          const type = 'photo';
           allMediaItems.push({ id: key, url: JSON.parse(url), type });
         }
       }
@@ -41,11 +40,7 @@ const Picture = () => {
               className="flex justify-center items-center cursor-pointer"
               onClick={() => openModal(item)}
             >
-              {item.type === 'photo' ? (
-                <img src={item.url} alt={`Photo ${item.id}`} className="w-full h-auto" />
-              ) : (
-                <video src={item.url} controls className="w-full h-auto" />
-              )}
+              <img src={item.url} alt={item.id} className="w-full h-auto" />
             </div>
           ))}
         </div>
@@ -68,11 +63,7 @@ const Picture = () => {
             >
               Close
             </button>
-            {selectedItem.type === 'photo' ? (
-              <img src={selectedItem.url} alt={`Photo ${selectedItem.id}`} className="w-full h-auto" />
-            ) : (
-              <video src={selectedItem.url} controls className="w-full h-auto" />
-            )}
+            <img src={selectedItem.url} alt={selectedItem.id} className="w-full h-auto" />
           </div>
         )}
       </Modal>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
+import WifiIcon from '@mui/icons-material/Wifi';
+import WifiOffIcon from '@mui/icons-material/WifiOff';
 const Online = () => {
   const [online, setOnline] = useState(navigator.onLine);
 
@@ -18,7 +19,7 @@ const Online = () => {
 
   return (
     <div>
-         {online ? "En ligne" : "Hors ligne"}
+         {online ? <WifiIcon /> : <WifiOffIcon />}
     </div>
   );
 }

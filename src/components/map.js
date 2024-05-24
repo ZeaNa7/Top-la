@@ -63,11 +63,11 @@ const MapComponent = () => {
   }
 
   if (locationAllowed === null) {
-    return <div>Demande d'accès à la localisation...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (locationAllowed === false) {
-    return <div>LAccès à la localisation refusé. Activez la localisation pour accéder à la carte.</div>;
+    return <div>L'accès à la localisation refusé. Activez la localisation pour accéder à la carte.</div>;
   }
 
   return (

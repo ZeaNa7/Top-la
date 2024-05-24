@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Diversity2Icon from '@mui/icons-material/Diversity2';import MenuIcon from '@mui/icons-material/Menu';
-import BatteryIndicator from '../components/battery-indicator';
+import BatteryIndicator from '../components/batteryIndicator';
+import Online from '../components/online';
 
 const App = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,7 +43,7 @@ const App = () => {
           }}
         >
           {/* Affichage des noms de page uniquement sur les écrans non mobiles */}
-                    <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'flex' }}}>
+          <Typography variant="h6" sx={{paddingRight: '20px', display: { xs: 'none', sm: 'flex' }}}>
             <Link to="/camera" style={{ textDecoration: 'none', color: 'inherit' }}>
               Camera
             </Link>
@@ -64,6 +65,7 @@ const App = () => {
           </Typography>
         </Box>
           <BatteryIndicator />
+          < Online />
         {/* Menu déroulant pour les petits écrans */}
         <Menu
           anchorEl={anchorEl}
