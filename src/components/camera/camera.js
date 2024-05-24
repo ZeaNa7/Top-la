@@ -19,6 +19,12 @@ const CameraComponent = () => {
     }
   };
 
+  const showNativeNotification = (title, message) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body: message });
+    }
+  };
+
   const takePhoto = async () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
@@ -33,12 +39,13 @@ const CameraComponent = () => {
         localStorage.setItem(uniqueKey, JSON.stringify(photoURL));
         
         if (navigator.vibrate) {
-          navigator.vibrate([200, 100, 200]);
+          navigator.vibrate([
+            100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,]);        
         } else {
           console.warn('Vibration not supported');
         }
         
-        showNativeNotification('Photo Taken', 'Your photo has been taken successfully.');
+        showNativeNotification('Photo', 'Votre photo a bien été prise !');
 
         if (isOnline) {
           setPictures((prevPhotos) => [...prevPhotos, photoURL]);
@@ -57,12 +64,6 @@ const CameraComponent = () => {
     return `${type}_${newCounter}`;
   };
 
-  const showNativeNotification = (title, message) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, { body: message });
-    }
-  };
-
   const loadPhotosFromStorage = () => {
     const storedPhotos = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -79,16 +80,6 @@ const CameraComponent = () => {
 
   useEffect(() => {
     requestNotificationPermission();
-
-    const requestCameraPermission = async () => {
-      try {
-        await navigator.mediaDevices.getUserMedia({ video: true });
-      } catch (error) {
-        console.error('Camera permission denied:', error);
-      }
-    };
-
-    requestCameraPermission();
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -100,27 +91,24 @@ const CameraComponent = () => {
         console.error('Error accessing camera:', error);
       });
 
-    const handleOnline = () => {
-      setIsOnline(true);
-      loadPhotosFromStorage(); // Load photos from local storage when coming back online
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    if (isOnline) {
+  const handleConnectionChange = () => {
+    const online = navigator.onLine;
+    setIsOnline(online);
+    if (online) {
       loadPhotosFromStorage();
     }
+  };
 
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [isOnline]);
+  window.addEventListener('online', handleConnectionChange);
+  window.addEventListener('offline', handleConnectionChange);
+
+  handleConnectionChange();
+
+  return () => {
+    window.removeEventListener('online', handleConnectionChange);
+    window.removeEventListener('offline', handleConnectionChange);
+  };
+}, []);
 
   return (
     <>
@@ -131,7 +119,6 @@ const CameraComponent = () => {
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <video ref={videoRef} style={{ maxWidth: '100%', maxHeight: '80vh' }} autoPlay></video>
-        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       </div>
 
       <div style={{ textAlign: 'center' }}>
